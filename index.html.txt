@@ -1,0 +1,407 @@
+
+import React, { useState, useEffect } from 'react';
+import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope, FaMoon, FaSun, FaArrowUp, FaPalette, FaPen, FaCamera, FaBrush, FaLayerGroup, FaMagic, FaEye, FaPhone } from 'react-icons/fa';
+
+interface Project {
+  id: number;
+  title: string;
+  category: string;
+  description: string;
+  tech: string[];
+}
+
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  content: string;
+}
+
+export default function Portfolio() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const projects: Project[] = [
+    { id: 1, title: 'Brand Identity Design', category: 'design', description: 'Complete visual identity for tech startup', tech: ['Illustrator', 'Photoshop', 'Figma'] },
+    { id: 2, title: 'Marketing Campaign', category: 'design', description: 'Social media graphics and promotional materials', tech: ['After Effects', 'Premiere Pro'] },
+    { id: 3, title: 'UI/UX Redesign', category: 'web', description: 'Modern interface design for e-commerce platform', tech: ['Figma', 'Sketch', 'Principle'] },
+    { id: 4, title: 'Print Design', category: 'design', description: 'Brochures, flyers and business card designs', tech: ['InDesign', 'Illustrator'] },
+    { id: 5, title: 'Motion Graphics', category: 'web', description: 'Animated logos and video intros', tech: ['After Effects', 'Cinema 4D'] },
+    { id: 6, title: 'Packaging Design', category: 'design', description: 'Product packaging and label designs', tech: ['Illustrator', 'Dimension'] },
+  ];
+
+  const testimonials: Testimonial[] = [
+    { id: 1, name: 'Rahul Verma', role: 'CEO at Creative Agency', content: 'Exceptional design work! Nikhil brought our vision to life with stunning visuals.' },
+    { id: 2, name: 'Priya Singh', role: 'Marketing Manager', content: 'Creative and professional. Delivered high-quality designs that exceeded our expectations.' },
+    { id: 3, name: 'Amit Kumar', role: 'Startup Founder', content: 'Talented graphics designer with great attention to detail and modern aesthetics.' },
+  ];
+
+  const skills = [
+    { icon: FaPalette, name: 'Graphic Design', items: ['Photoshop', 'Illustrator', 'InDesign', 'CorelDRAW'] },
+    { icon: FaPen, name: 'Digital Illustration', items: ['Procreate', 'Affinity Designer', 'Sketchbook'] },
+    { icon: FaCamera, name: 'Photography', items: ['Lightroom', 'Capture One', 'Photo Editing'] },
+    { icon: FaBrush, name: 'Brand Design', items: ['Logo Design', 'Brand Guidelines', 'Visual Identity'] },
+    { icon: FaLayerGroup, name: 'Print Design', items: ['Brochures', 'Business Cards', 'Posters'] },
+    { icon: FaMagic, name: 'Motion Graphics', items: ['After Effects', 'Premiere Pro', 'Animation'] },
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  const filteredProjects = projects.filter(project => 
+    activeFilter === 'all' || project.category === activeFilter
+  );
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert('Thank you for your message! I\'ll get back to you soon.');
+    setFormData({ name: '', email: '', message: '' });
+  };
+
+  return (
+    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+      {/* Navigation */}
+      <nav className={`fixed w-full z-50 backdrop-blur-lg ${darkMode ? 'bg-gray-900/90' : 'bg-white/90'} border-b ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Nikhil Sharma</span>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-8">
+              {['Home', 'About', 'Skills', 'Projects', 'Testimonials', 'Contact'].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-purple-600 transition-colors">
+                  {item}
+                </a>
+              ))}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+              >
+                {darkMode ? <FaSun className="text-yellow-400" /> : <FaMoon />}
+              </button>
+            </div>
+
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2"
+            >
+              <div className="space-y-1">
+                <div className={`w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-900'} transition-transform`} />
+                <div className={`w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-900'}`} />
+                <div className={`w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-900'}`} />
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className={`md:hidden ${darkMode ? 'bg-gray-900' : 'bg-white'} border-t ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+            <div className="px-4 py-2 space-y-2">
+              {['Home', 'About', 'Skills', 'Projects', 'Testimonials', 'Contact'].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="block py-2 hover:text-purple-600">
+                  {item}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/20 to-blue-600/20" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-pulse">
+              Nikhil Sharma
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+            Passionate Graphics Designer with 1+ years of experience creating stunning visual experiences
+          </p>
+          <div className="flex gap-4 justify-center mb-12">
+            <a href="#projects" className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:scale-105 transition-transform">
+              View Projects
+            </a>
+            <a href="#contact" className={`px-8 py-3 border-2 ${darkMode ? 'border-white' : 'border-gray-900'} rounded-full hover:scale-105 transition-transform`}>
+              Get In Touch
+            </a>
+          </div>
+          <div className="flex justify-center gap-6">
+            <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaGithub /></a>
+            <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaLinkedin /></a>
+            <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaTwitter /></a>
+            <a href="mailto:nikhil2k333@gmail.com" className="text-2xl hover:text-purple-600 transition-colors"><FaEnvelope /></a>
+          </div>
+        </div>
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-pulse" />
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">About Me</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl transform rotate-3" />
+              <div className={`relative ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-8`}>
+                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-64" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold mb-4">Passionate Graphics Designer</h3>
+              <p className="mb-4">
+                With 1+ years of experience in graphic design, I specialize in creating 
+                visually stunning designs that communicate brand messages effectively.
+              </p>
+              <p className="mb-6">
+                My approach focuses on understanding client needs and translating them into 
+                compelling visual stories that engage audiences and drive results.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                  <div className="text-3xl font-bold text-purple-600">20+</div>
+                  <div>Projects Completed</div>
+                </div>
+                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                  <div className="text-3xl font-bold text-pink-600">15+</div>
+                  <div>Happy Clients</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Skills Section */}
+      <section id="skills" className={`py-20 px-4 ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Skills & Expertise</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {skills.map((skill, index) => {
+              const Icon = skill.icon;
+              return (
+                <div key={index} className={`p-6 rounded-xl ${darkMode ? 'bg-gray-900' : 'bg-white'} hover:scale-105 transition-transform cursor-pointer group`}>
+                  <Icon className="text-4xl mb-4 text-purple-600 group-hover:text-pink-600 transition-colors" />
+                  <h3 className="text-xl font-bold mb-3">{skill.name}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {skill.items.map((item, i) => (
+                      <span key={i} className={`px-3 py-1 text-sm rounded-full ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section id="projects" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Featured Projects</span>
+          </h2>
+          <div className="flex justify-center gap-4 mb-8">
+            {['all', 'design', 'web'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-2 rounded-full capitalize transition-all ${
+                  activeFilter === filter
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                    : darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProjects.map((project) => (
+              <div key={project.id} className={`group rounded-xl overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'} hover:scale-105 transition-transform`}>
+                <div className="bg-gray-200 border-2 border-dashed rounded-t-xl w-full h-48" />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                  <p className="mb-4 text-gray-600 dark:text-gray-400">{project.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech.map((tech, i) => (
+                      <span key={i} className="px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className={`py-20 px-4 ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Client Testimonials</span>
+          </h2>
+          <div className="relative">
+            <div className={`p-8 rounded-xl ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+              <p className="text-xl mb-6 italic">"{testimonials[currentTestimonial].content}"</p>
+              <div>
+                <div className="font-bold">{testimonials[currentTestimonial].name}</div>
+                <div className="text-gray-600 dark:text-gray-400">{testimonials[currentTestimonial].role}</div>
+              </div>
+            </div>
+            <div className="flex justify-center gap-2 mt-6">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentTestimonial === index ? 'bg-purple-600 w-8' : 'bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Get In Touch</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className={`p-8 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <FaEnvelope className="text-purple-600 text-xl" />
+                  <div>
+                    <div className="font-semibold">Email</div>
+                    <a href="mailto:nikhil2k333@gmail.com" className="text-purple-600 hover:underline">nikhil2k333@gmail.com</a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <FaPhone className="text-purple-600 text-xl" />
+                  <div>
+                    <div className="font-semibold">Phone</div>
+                    <a href="tel:6287184916" className="text-purple-600 hover:underline">+91 6287184916</a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <FaEye className="text-purple-600 text-xl" />
+                  <div>
+                    <div className="font-semibold">Available for</div>
+                    <div>Freelance Projects</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <h4 className="font-semibold mb-3">Follow Me</h4>
+                <div className="flex gap-4">
+                  <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaGithub /></a>
+                  <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaLinkedin /></a>
+                  <a href="#" className="text-2xl hover:text-purple-600 transition-colors"><FaTwitter /></a>
+                </div>
+              </div>
+            </div>
+            <form onSubmit={handleSubmit} className={`p-8 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className="mb-4">
+                <label className="block mb-2">Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className={`w-full px-4 py-2 rounded-lg ${darkMode ? 'bg-gray-900' : 'bg-gray-100'} focus:outline-none focus:ring-2 focus:ring-purple-600`}
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2">Email</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className={`w-full px-4 py-2 rounded-lg ${darkMode ? 'bg-gray-900' : 'bg-gray-100'} focus:outline-none focus:ring-2 focus:ring-purple-600`}
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block mb-2">Message</label>
+                <textarea
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  rows={5}
+                  className={`w-full px-4 py-2 rounded-lg ${darkMode ? 'bg-gray-900' : 'bg-gray-100'} focus:outline-none focus:ring-2 focus:ring-purple-600`}
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:scale-105 transition-transform"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className={`py-8 px-4 border-t ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-gray-50 border-gray-200'}`}>
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="mb-4">a9 2024 Nikhil Sharma. All rights reserved.</p>
+          <div className="flex justify-center gap-6">
+            <a href="#" className="hover:text-purple-600 transition-colors"><FaGithub /></a>
+            <a href="#" className="hover:text-purple-600 transition-colors"><FaLinkedin /></a>
+            <a href="#" className="hover:text-purple-600 transition-colors"><FaTwitter /></a>
+            <a href="mailto:nikhil2k333@gmail.com" className="hover:text-purple-600 transition-colors"><FaEnvelope /></a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:scale-110 transition-transform z-50"
+        >
+          <FaArrowUp />
+        </button>
+      )}
+    </div>
+  );
+}
